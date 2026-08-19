@@ -1,1 +1,496 @@
+<!DOCTYPE html><html lang='ne'><head><meta charset='UTF-8'><title>Time Calculator</title></head><body><style>
+/* ===== Time Calculator - Improved ===== */
+.time-calc {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --text: #1e293b;
+    --muted: #64748b;
+    --card-bg: #ffffff;
+    --input-bg: #f1f5f9;
+    --border: #e2e8f0;
+    --result-bg: #1e293b;
+    --result-text: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    width: 100%;
+    max-width: 420px;
+    margin: 24px auto;
+    padding: 0 14px;
+    box-sizing: border-box;
+}
 
+.time-calc * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .time-calc {
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --card-bg: #1e293b;
+        --input-bg: #334155;
+        --border: #475569;
+        --result-bg: #0f172a;
+        --result-text: #f8fafc;
+    }
+}
+
+.time-calc .card {
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 22px 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.12);
+}
+
+.time-calc h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.time-calc .subhead {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.time-calc .group {
+    background: transparent;
+    margin-bottom: 18px;
+}
+
+.time-calc .label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding: 0 2px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.time-calc .badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.time-calc .badge:active {
+    transform: scale(0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+    .time-calc .badge {
+        background: #1e3a8a;
+        color: #93c5fd;
+    }
+}
+
+.time-calc .time-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.time-calc .time-row input[type="number"] {
+    width: 68px;
+    padding: 12px 6px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--text);
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    outline: 0;
+    transition: 0.2s;
+    min-height: 52px;
+    -moz-appearance: textfield;
+    touch-action: manipulation;
+}
+
+.time-calc .time-row input[type="number"]::-webkit-inner-spin-button,
+.time-calc .time-row input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.time-calc .time-row input[type="number"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.time-calc .time-row select {
+    padding: 12px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 700;
+    outline: 0;
+    cursor: pointer;
+    min-height: 52px;
+    min-width: 70px;
+    touch-action: manipulation;
+}
+
+.time-calc .time-row select:focus {
+    border-color: var(--primary);
+}
+
+.time-calc .colon {
+    color: var(--muted);
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 0 2px;
+}
+
+.time-calc .hint {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 4px;
+}
+
+/* ===== Main Buttons - Blue BG + White Text ===== */
+.time-calc .action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 18px 0 14px;
+}
+
+.time-calc .action-btn {
+    background: var(--primary);
+    border: none;
+    color: #ffffff;
+    padding: 14px 12px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.time-calc .action-btn:active {
+    transform: scale(0.96);
+    background: var(--primary-hover);
+}
+
+.time-calc .action-btn:hover {
+    background: var(--primary-hover);
+}
+
+/* Result Box */
+.time-calc .result-box {
+    background: var(--result-bg);
+    border-radius: 22px;
+    padding: 16px 18px;
+    margin: 12px 0 8px;
+    text-align: center;
+}
+
+.time-calc .result-label {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.time-calc .result-time {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--result-text);
+    letter-spacing: 1px;
+    line-height: 1.25;
+}
+
+.time-calc .result-time .ampm {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-left: 6px;
+}
+
+/* Reset Button */
+.time-calc .reset-btn {
+    background: transparent;
+    border: 2px solid var(--border);
+    color: var(--muted);
+    padding: 11px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    display: block;
+    margin: 10px auto 0;
+    min-height: 46px;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.time-calc .reset-btn:active {
+    transform: scale(0.96);
+}
+
+.time-calc .reset-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.time-calc .footer {
+    margin-top: 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+/* Mobile tweaks */
+@media (max-width: 380px) {
+    .time-calc .time-row input[type="number"] {
+        width: 58px;
+        font-size: 1.15rem;
+    }
+    .time-calc .result-time {
+        font-size: 2.1rem;
+    }
+    .time-calc h1 {
+        font-size: 1.55rem;
+    }
+}
+</style>
+
+<div class="time-calc">
+    <div class="card">
+        <h1>⏳ Time Calculator</h1>
+        <div class="subhead">AM/PM · जोड / घटाउ</div>
+
+        <!-- मूल समय -->
+        <div class="group">
+            <div class="label-row">
+                <span>⏰ मूल समय</span>
+                <span class="badge" id="setCurrentTimeBtn">🔄 अहिलेको</span>
+            </div>
+            <div class="time-row">
+                <input type="number" id="hourInput" min="1" max="12" value="12" step="1">
+                <span class="colon">:</span>
+                <input type="number" id="minuteInput" min="0" max="59" value="33" step="1">
+                <select id="ampmSelect">
+                    <option value="AM">AM</option>
+                    <option value="PM" selected>PM</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- जोड/घटाउ -->
+        <div class="group">
+            <div class="label-row">
+                <span>➕➖ जोड / घटाउ</span>
+                <span>घण्टा : मिनेट</span>
+            </div>
+            <div class="time-row">
+                <input type="number" id="addHour" min="0" max="999" value="2" step="1">
+                <span class="colon">:</span>
+                <input type="number" id="addMinute" min="0" max="59" value="15" step="1">
+                <span class="hint">(0–59)</span>
+            </div>
+        </div>
+
+        <!-- बटनहरू -->
+        <div class="action-grid">
+            <button class="action-btn" id="addBtn">➕ जोड</button>
+            <button class="action-btn" id="subtractBtn">➖ घटाउ</button>
+        </div>
+
+        <!-- नतिजा -->
+        <div class="result-box">
+            <div class="result-label">✦ परिणाम ✦</div>
+            <div class="result-time" id="resultDisplay">
+                12:33 <span class="ampm">PM</span>
+            </div>
+        </div>
+
+        <button class="reset-btn" id="resetBtn">↺ मूल समयमा फर्काउनुहोस्</button>
+        <div class="footer">⚡ माधवको प्रकाशन:समय गणना</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const hourInput = document.getElementById('hourInput');
+    const minuteInput = document.getElementById('minuteInput');
+    const ampmSelect = document.getElementById('ampmSelect');
+    const addHour = document.getElementById('addHour');
+    const addMinute = document.getElementById('addMinute');
+    const addBtn = document.getElementById('addBtn');
+    const subtractBtn = document.getElementById('subtractBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultDisplay = document.getElementById('resultDisplay');
+    const setCurrentTimeBtn = document.getElementById('setCurrentTimeBtn');
+
+    function formatTime12(hours, minutes) {
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        let h12 = hours % 12;
+        if (h12 === 0) h12 = 12;
+        const mStr = String(minutes).padStart(2, '0');
+        return h12 + ':' + mStr + ' <span class="ampm">' + ampm + '</span>';
+    }
+
+    function getInputTime() {
+        let h = parseInt(hourInput.value, 10);
+        let m = parseInt(minuteInput.value, 10);
+        const ampm = ampmSelect.value;
+        if (isNaN(h) || h < 1 || h > 12) h = 12;
+        if (isNaN(m) || m < 0 || m > 59) m = 0;
+        hourInput.value = h;
+        minuteInput.value = m;
+        let hours24 = h;
+        if (ampm === 'PM' && h !== 12) hours24 = h + 12;
+        else if (ampm === 'AM' && h === 12) hours24 = 0;
+        return { hours24: hours24, minutes: m };
+    }
+
+    function getOffset() {
+        let h = parseInt(addHour.value, 10);
+        let m = parseInt(addMinute.value, 10);
+        if (isNaN(h) || h < 0) h = 0;
+        if (isNaN(m) || m < 0 || m > 59) m = 0;
+        addHour.value = h;
+        addMinute.value = m;
+        return { hours: h, minutes: m };
+    }
+
+    function calculateTime(operation) {
+        const base = getInputTime();
+        const offset = getOffset();
+        let totalMinutes = base.hours24 * 60 + base.minutes;
+        const offsetMinutes = offset.hours * 60 + offset.minutes;
+        if (operation === 'add') totalMinutes += offsetMinutes;
+        else totalMinutes -= offsetMinutes;
+        totalMinutes = ((totalMinutes % 1440) + 1440) % 1440;
+        const newHours = Math.floor(totalMinutes / 60);
+        const newMinutes = totalMinutes % 60;
+        resultDisplay.innerHTML = formatTime12(newHours, newMinutes);
+    }
+
+    function setCurrentTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        let h12 = hours % 12;
+        if (h12 === 0) h12 = 12;
+        hourInput.value = h12;
+        minuteInput.value = minutes;
+        ampmSelect.value = ampm;
+        const base = getInputTime();
+        resultDisplay.innerHTML = formatTime12(base.hours24, base.minutes);
+    }
+
+    // Initialize
+    setCurrentTime();
+    addHour.value = 2;
+    addMinute.value = 15;
+
+    setCurrentTimeBtn.addEventListener('click', setCurrentTime);
+    addBtn.addEventListener('click', function() { calculateTime('add'); });
+    subtractBtn.addEventListener('click', function() { calculateTime('subtract'); });
+    resetBtn.addEventListener('click', function() {
+        setCurrentTime();
+        addHour.value = 2;
+        addMinute.value = 15;
+    });
+
+    // Input limits
+    [hourInput, minuteInput, addHour, addMinute].forEach(function(input) {
+        input.addEventListener('change', function() {
+            let val = parseInt(this.value, 10);
+            const min = parseInt(this.min, 10);
+            const max = parseInt(this.max, 10);
+            if (!isNaN(min) && !isNaN(max)) {
+                if (isNaN(val)) val = min;
+                if (val < min) val = min;
+                if (val > max) val = max;
+                this.value = val;
+            }
+            if (this.id === 'minuteInput' || this.id === 'addMinute') {
+                let v = parseInt(this.value, 10);
+                if (isNaN(v)) v = 0;
+                if (v > 59) this.value = 59;
+                if (v < 0) this.value = 0;
+            }
+            if (this.id === 'hourInput') {
+                let v = parseInt(this.value, 10);
+                if (isNaN(v)) v = 1;
+                if (v < 1) this.value = 1;
+                if (v > 12) this.value = 12;
+            }
+            if (this.id === 'addHour') {
+                let v = parseInt(this.value, 10);
+                if (isNaN(v) || v < 0) this.value = 0;
+            }
+        });
+    });
+
+    // Enter key = Add
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const active = document.activeElement;
+            if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT') && 
+                active.closest('.time-calc')) {
+                calculateTime('add');
+                e.preventDefault();
+            }
+        }
+    });
+})();
+</script></body></html>
